@@ -119,14 +119,32 @@ async function organizeTabs(): Promise<void> {
       colorAssignments[title.toLowerCase()] = color
     }
 
-    // Phase 2: Apply titles, colors, and keep expanded so group names are visible
+    // Phase 2: Apply titles, colors, and collapse all groups
     for (const { groupId, title, color } of groupUpdates) {
       try {
-        await chrome.tabGroups.update(groupId, { title, color, collapsed: false })
+        await chrome.tabGroups.update(groupId, { title, color, collapsed: true })
       } catch {
         // Group may have been removed between phases; skip it
       }
       await new Promise(resolve => setTimeout(resolve, 100))
+    }
+
+    // Phase 3: Expand each group so Chrome renders the name headers
+    await new Promise(resolve => setTimeout(resolve, 200))
+    for (const { groupId } of groupUpdates) {
+      try {
+        await chrome.tabGroups.update(groupId, { collapsed: false })
+      } catch { /* skip */ }
+      await new Promise(resolve => setTimeout(resolve, 150))
+    }
+
+    // Phase 4: Collapse again — Chrome keeps the name labels on the chips
+    await new Promise(resolve => setTimeout(resolve, 200))
+    for (const { groupId } of groupUpdates) {
+      try {
+        await chrome.tabGroups.update(groupId, { collapsed: true })
+      } catch { /* skip */ }
+      await new Promise(resolve => setTimeout(resolve, 150))
     }
 
     await chrome.storage.local.set({ [STORAGE_KEYS.COLOR_ASSIGNMENTS]: colorAssignments })
