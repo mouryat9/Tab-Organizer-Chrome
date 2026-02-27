@@ -97,10 +97,12 @@ async function organizeTabs(): Promise<void> {
 
     let colorIndex = 0
 
+    // Phase 1: Group all tabs first (create/reuse groups)
+    const groupUpdates: { groupId: number; title: string; color: chrome.tabGroups.ColorEnum }[] = []
+
     for (const [title, { tabIds, color: preferredColor }] of groupMap) {
       if (tabIds.length === 0) continue
 
-      // Determine the color for this group: strategy-specified > palette cycling
       const color = preferredColor ?? GROUP_COLORS[colorIndex % GROUP_COLORS.length]
       colorIndex++
 
@@ -108,16 +110,24 @@ async function organizeTabs(): Promise<void> {
 
       if (existingGroup) {
         await chrome.tabs.group({ tabIds, groupId: existingGroup.id })
-        // Always sync the color to match current strategy/cycling
-        if (existingGroup.color !== color) {
-          await chrome.tabGroups.update(existingGroup.id, { color })
-        }
+        groupUpdates.push({ groupId: existingGroup.id, title, color })
       } else {
         const groupId = await chrome.tabs.group({ tabIds })
-        await chrome.tabGroups.update(groupId, { title, color, collapsed: false })
+        groupUpdates.push({ groupId, title, color })
       }
 
       colorAssignments[title.toLowerCase()] = color
+    }
+
+    // Phase 2: Apply titles and colors with delays so Chrome processes each update
+    for (const { groupId, title, color } of groupUpdates) {
+      try {
+        await chrome.tabGroups.update(groupId, { title, color, collapsed: false })
+      } catch {
+        // Group may have been removed between phases; skip it
+      }
+      // Small delay to let Chrome's UI process the update
+      await new Promise(resolve => setTimeout(resolve, 50))
     }
 
     await chrome.storage.local.set({ [STORAGE_KEYS.COLOR_ASSIGNMENTS]: colorAssignments })
