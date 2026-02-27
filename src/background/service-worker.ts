@@ -100,26 +100,24 @@ async function organizeTabs(): Promise<void> {
     for (const [title, { tabIds, color: preferredColor }] of groupMap) {
       if (tabIds.length === 0) continue
 
+      // Determine the color for this group: strategy-specified > palette cycling
+      const color = preferredColor ?? GROUP_COLORS[colorIndex % GROUP_COLORS.length]
+      colorIndex++
+
       const existingGroup = titleToGroup.get(title.toLowerCase())
 
       if (existingGroup) {
         await chrome.tabs.group({ tabIds, groupId: existingGroup.id })
-        // Update color if strategy specifies one
-        if (preferredColor && preferredColor !== existingGroup.color) {
-          await chrome.tabGroups.update(existingGroup.id, { color: preferredColor })
+        // Always sync the color to match current strategy/cycling
+        if (existingGroup.color !== color) {
+          await chrome.tabGroups.update(existingGroup.id, { color })
         }
       } else {
         const groupId = await chrome.tabs.group({ tabIds })
-
-        // Use strategy-specified color, or saved assignment, or cycle through palette
-        const color = preferredColor
-          ?? colorAssignments[title.toLowerCase()]
-          ?? GROUP_COLORS[colorIndex % GROUP_COLORS.length]
-        colorIndex++
-
         await chrome.tabGroups.update(groupId, { title, color, collapsed: false })
-        colorAssignments[title.toLowerCase()] = color
       }
+
+      colorAssignments[title.toLowerCase()] = color
     }
 
     await chrome.storage.local.set({ [STORAGE_KEYS.COLOR_ASSIGNMENTS]: colorAssignments })
