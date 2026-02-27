@@ -111,7 +111,7 @@ export function Header() {
         </button>
         <button
           onClick={organizeTabs}
-          className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+          className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
         >
           Organize
         </button>
