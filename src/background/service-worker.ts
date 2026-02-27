@@ -119,30 +119,21 @@ async function organizeTabs(): Promise<void> {
       colorAssignments[title.toLowerCase()] = color
     }
 
-    // Phase 2: Apply titles, colors, and collapse all groups
+    // Phase 2: Apply titles and colors only
     for (const { groupId, title, color } of groupUpdates) {
       try {
-        await chrome.tabGroups.update(groupId, { title, color, collapsed: true })
-      } catch {
-        // Group may have been removed between phases; skip it
-      }
+        await chrome.tabGroups.update(groupId, { title, color })
+      } catch { /* skip */ }
       await new Promise(resolve => setTimeout(resolve, 100))
     }
 
-    // Phase 3: Expand each group so Chrome renders the name headers
-    await new Promise(resolve => setTimeout(resolve, 200))
-    for (const { groupId } of groupUpdates) {
+    // Phase 3: Query fresh group IDs from Chrome, then collapse each one
+    // Collapsed groups with titles show as labeled colored chips in the tab strip
+    await new Promise(resolve => setTimeout(resolve, 300))
+    const freshGroups = await chrome.tabGroups.query({ windowId: chrome.windows.WINDOW_ID_CURRENT })
+    for (const group of freshGroups) {
       try {
-        await chrome.tabGroups.update(groupId, { collapsed: false })
-      } catch { /* skip */ }
-      await new Promise(resolve => setTimeout(resolve, 150))
-    }
-
-    // Phase 4: Collapse again — Chrome keeps the name labels on the chips
-    await new Promise(resolve => setTimeout(resolve, 200))
-    for (const { groupId } of groupUpdates) {
-      try {
-        await chrome.tabGroups.update(groupId, { collapsed: true })
+        await chrome.tabGroups.update(group.id, { collapsed: true })
       } catch { /* skip */ }
       await new Promise(resolve => setTimeout(resolve, 150))
     }
