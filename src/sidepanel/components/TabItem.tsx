@@ -25,7 +25,7 @@ export function TabItem({ tab, groupId }: Props) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`flex items-center gap-2 px-3 py-1.5 mx-1 rounded hover:bg-[var(--hover-bg)] group cursor-grab active:cursor-grabbing transition-colors ${
+      className={`flex items-center gap-2 px-3 py-1.5 mx-1 rounded hover:bg-[var(--hover-bg)] group cursor-grab active:cursor-grabbing ${
         isDragging ? 'opacity-50 z-50' : ''
       } ${tab.active ? 'bg-[var(--hover-bg)]' : ''}`}
     >

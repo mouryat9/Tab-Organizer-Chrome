@@ -75,7 +75,7 @@ export function TabGroupCard({ group }: Props) {
   return (
     <div
       ref={setNodeRef}
-      className={`rounded-lg border transition-colors ${
+      className={`rounded-lg border ${
         isOver ? 'border-[var(--accent)] bg-[var(--accent-muted)]' : 'border-[var(--border)] bg-[var(--bg-secondary)]'
       }`}
     >

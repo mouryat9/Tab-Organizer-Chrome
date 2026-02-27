@@ -199,7 +199,7 @@ chrome.runtime.onConnect.addListener((port) => {
 })
 
 async function broadcastTabState() {
-  if (connectedPorts.length === 0) return
+  if (connectedPorts.length === 0 || isOrganizing) return
   const groups = await getGroupedTabState()
   for (const port of connectedPorts) {
     port.postMessage({ type: 'TAB_STATE_UPDATE', groups })
