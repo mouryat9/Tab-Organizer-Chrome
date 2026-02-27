@@ -2,6 +2,8 @@
 
 Automatically groups your Chrome tabs into organized groups. Built for people who are chaotic with their tabs.
 
+**Author:** Mourya Teja Kunuku
+
 ## Features
 
 - **5 Organizing Templates** — switch between different grouping strategies:
@@ -38,8 +40,8 @@ If you want to modify the code:
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/Tab-Organizer.git
-cd Tab-Organizer
+git clone https://github.com/mouryat9/Tab-Organizer-Chrome.git
+cd Tab-Organizer-Chrome
 
 # Install dependencies
 npm install
@@ -75,3 +77,7 @@ This extension requires:
 - `tabGroups` — to create and manage tab groups
 - `sidePanel` — to display the side panel UI
 - `storage` — to save your settings
+
+## License
+
+MIT
