@@ -97,32 +97,36 @@ async function organizeTabs(): Promise<void> {
 
     let colorIndex = 0
 
+    // Find the active tab to keep its group expanded
+    const activeTabId = tabs.find(t => t.active)?.id
+
     // Phase 1: Group all tabs first (create/reuse groups)
-    const groupUpdates: { groupId: number; title: string; color: chrome.tabGroups.ColorEnum }[] = []
+    const groupUpdates: { groupId: number; title: string; color: chrome.tabGroups.ColorEnum; hasActiveTab: boolean }[] = []
 
     for (const [title, { tabIds, color: preferredColor }] of groupMap) {
       if (tabIds.length === 0) continue
 
       const color = preferredColor ?? GROUP_COLORS[colorIndex % GROUP_COLORS.length]
       colorIndex++
+      const hasActiveTab = activeTabId !== undefined && tabIds.includes(activeTabId)
 
       const existingGroup = titleToGroup.get(title.toLowerCase())
 
       if (existingGroup) {
         await chrome.tabs.group({ tabIds, groupId: existingGroup.id })
-        groupUpdates.push({ groupId: existingGroup.id, title, color })
+        groupUpdates.push({ groupId: existingGroup.id, title, color, hasActiveTab })
       } else {
         const groupId = await chrome.tabs.group({ tabIds })
-        groupUpdates.push({ groupId, title, color })
+        groupUpdates.push({ groupId, title, color, hasActiveTab })
       }
 
       colorAssignments[title.toLowerCase()] = color
     }
 
-    // Phase 2: Apply titles and colors with delays so Chrome processes each update
-    for (const { groupId, title, color } of groupUpdates) {
+    // Phase 2: Apply titles, colors, and collapse all except the active tab's group
+    for (const { groupId, title, color, hasActiveTab } of groupUpdates) {
       try {
-        await chrome.tabGroups.update(groupId, { title, color, collapsed: false })
+        await chrome.tabGroups.update(groupId, { title, color, collapsed: !hasActiveTab })
       } catch {
         // Group may have been removed between phases; skip it
       }
