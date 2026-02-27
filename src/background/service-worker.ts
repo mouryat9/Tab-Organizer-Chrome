@@ -96,8 +96,9 @@ async function organizeTabs(): Promise<void> {
     }
 
     let colorIndex = 0
+    const groupIds: number[] = []
 
-    // Group tabs, then immediately set title + color + collapse for each group
+    // Step 1: Group tabs and set title + color (keep EXPANDED so Chrome renders titles)
     for (const [title, { tabIds, color: preferredColor }] of groupMap) {
       if (tabIds.length === 0) continue
 
@@ -114,16 +115,32 @@ async function organizeTabs(): Promise<void> {
         groupId = await chrome.tabs.group({ tabIds })
       }
 
-      // Set title, color, and collapse immediately after grouping
       try {
-        await chrome.tabGroups.update(groupId, { title, color, collapsed: true })
-        console.log(`[TabOrganizer] Updated group "${title}" (${groupId}): color=${color}, collapsed=true`)
+        await chrome.tabGroups.update(groupId, { title, color, collapsed: false })
+        console.log(`[TabOrganizer] Step 1: "${title}" (${groupId}) expanded with title+color`)
       } catch (err) {
-        console.error(`[TabOrganizer] Failed to update group "${title}" (${groupId}):`, err)
+        console.error(`[TabOrganizer] Step 1 failed for "${title}":`, err)
       }
-      await new Promise(resolve => setTimeout(resolve, 150))
+      await new Promise(resolve => setTimeout(resolve, 200))
 
+      groupIds.push(groupId)
       colorAssignments[title.toLowerCase()] = color
+    }
+
+    // Step 2: Wait 1 second for Chrome to fully render all expanded group headers
+    console.log('[TabOrganizer] Waiting 1s for Chrome to render group headers...')
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    // Step 3: Collapse each group — Chrome should preserve the title on the chip
+    const currentGroups = await chrome.tabGroups.query({ windowId: chrome.windows.WINDOW_ID_CURRENT })
+    for (const group of currentGroups) {
+      try {
+        await chrome.tabGroups.update(group.id, { collapsed: true })
+        console.log(`[TabOrganizer] Step 3: collapsed group "${group.title}" (${group.id})`)
+      } catch (err) {
+        console.error(`[TabOrganizer] Step 3 failed for ${group.id}:`, err)
+      }
+      await new Promise(resolve => setTimeout(resolve, 200))
     }
 
     await chrome.storage.local.set({ [STORAGE_KEYS.COLOR_ASSIGNMENTS]: colorAssignments })
