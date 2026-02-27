@@ -2,37 +2,14 @@
 
 @font-face {
   font-family: 'Mona Sans';
-  src: url('https://github.githubassets.com/assets/mona-sans-regular-54e4db4a1a.woff2') format('woff2');
-  font-weight: 400;
+  src: url('../fonts/MonaSans-Variable.woff2') format('woff2');
+  font-weight: 200 900;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Mona Sans';
-  src: url('https://github.githubassets.com/assets/mona-sans-medium-262e4cfa98.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Mona Sans';
-  src: url('https://github.githubassets.com/assets/mona-sans-semibold-2e148b1e47.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Mona Sans';
-  src: url('https://github.githubassets.com/assets/mona-sans-bold-3f6a244e1b.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Dark theme (default) */
+/* Dark theme as root default — always available before React mounts */
+:root,
 [data-theme="dark"] {
   --bg-primary: #1a1a2e;
   --bg-secondary: #16213e;
@@ -48,7 +25,7 @@
   --toggle-off: #4b5563;
 }
 
-/* Light theme */
+/* Light theme overrides */
 [data-theme="light"] {
   --bg-primary: #ffffff;
   --bg-secondary: #f6f8fa;
