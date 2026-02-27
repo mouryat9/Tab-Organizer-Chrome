@@ -15,6 +15,7 @@ interface TabContextValue {
   showSettings: boolean
   setShowSettings: (v: boolean) => void
   organizeTabs: () => Promise<void>
+  deorganizeTabs: () => Promise<void>
   moveTabToGroup: (tabId: number, groupId: number) => Promise<void>
   renameGroup: (groupId: number, title: string) => Promise<void>
   recolorGroup: (groupId: number, color: chrome.tabGroups.ColorEnum) => Promise<void>
@@ -78,6 +79,10 @@ export function TabProvider({ children }: { children: ReactNode }) {
     await sendToBackground({ type: 'ORGANIZE_TABS' })
   }, [])
 
+  const deorganizeTabs = useCallback(async () => {
+    await sendToBackground({ type: 'DEORGANIZE_TABS' })
+  }, [])
+
   const moveTabToGroup = useCallback(async (tabId: number, groupId: number) => {
     await sendToBackground({ type: 'MOVE_TAB_TO_GROUP', tabId, targetGroupId: groupId })
   }, [])
@@ -122,6 +127,7 @@ export function TabProvider({ children }: { children: ReactNode }) {
         showSettings,
         setShowSettings,
         organizeTabs,
+        deorganizeTabs,
         moveTabToGroup,
         renameGroup,
         recolorGroup,

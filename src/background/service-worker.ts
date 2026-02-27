@@ -222,6 +222,18 @@ async function handleMessage(message: MessageToBackground) {
       return { type: 'ORGANIZE_COMPLETE', success: true }
     }
 
+    case 'DEORGANIZE_TABS': {
+      const tabs = await chrome.tabs.query({ currentWindow: true })
+      const groupedTabIds = tabs
+        .filter(t => t.id && t.groupId !== chrome.tabGroups.TAB_GROUP_ID_NONE)
+        .map(t => t.id!)
+      if (groupedTabIds.length > 0) {
+        await chrome.tabs.ungroup(groupedTabIds)
+      }
+      await broadcastTabState()
+      return { type: 'ORGANIZE_COMPLETE', success: true }
+    }
+
     case 'GET_TAB_STATE': {
       const groups = await getGroupedTabState()
       return { type: 'TAB_STATE_UPDATE', groups }

@@ -2,6 +2,7 @@ import type { Settings } from './types'
 
 export type MessageToBackground =
   | { type: 'ORGANIZE_TABS' }
+  | { type: 'DEORGANIZE_TABS' }
   | { type: 'GET_TAB_STATE' }
   | { type: 'MOVE_TAB_TO_GROUP'; tabId: number; targetGroupId: number }
   | { type: 'RENAME_GROUP'; groupId: number; title: string }

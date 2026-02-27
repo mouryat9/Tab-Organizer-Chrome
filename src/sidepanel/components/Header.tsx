@@ -5,7 +5,7 @@ import { TEMPLATES } from '../../shared/constants'
 import type { OrganizingTemplate } from '../../shared/types'
 
 export function Header() {
-  const { organizeTabs, showSettings, setShowSettings, groups, settings, updateSettings, toggleTheme } = useTabContext()
+  const { organizeTabs, deorganizeTabs, showSettings, setShowSettings, groups, settings, updateSettings, toggleTheme } = useTabContext()
   const [showTemplateDropdown, setShowTemplateDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -102,6 +102,13 @@ export function Header() {
         </div>
 
         <SearchBar />
+        <button
+          onClick={deorganizeTabs}
+          className="px-3 py-2 border border-[var(--border)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--accent)] text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+          title="Remove all tab groups and restore tabs to normal"
+        >
+          Reset
+        </button>
         <button
           onClick={organizeTabs}
           className="px-4 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
