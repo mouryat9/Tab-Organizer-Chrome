@@ -97,9 +97,7 @@ async function organizeTabs(): Promise<void> {
 
     let colorIndex = 0
 
-    // Phase 1: Group all tabs first (create/reuse groups)
-    const groupUpdates: { groupId: number; title: string; color: chrome.tabGroups.ColorEnum }[] = []
-
+    // Group tabs, then immediately set title + color + collapse for each group
     for (const [title, { tabIds, color: preferredColor }] of groupMap) {
       if (tabIds.length === 0) continue
 
@@ -107,35 +105,25 @@ async function organizeTabs(): Promise<void> {
       colorIndex++
 
       const existingGroup = titleToGroup.get(title.toLowerCase())
+      let groupId: number
 
       if (existingGroup) {
         await chrome.tabs.group({ tabIds, groupId: existingGroup.id })
-        groupUpdates.push({ groupId: existingGroup.id, title, color })
+        groupId = existingGroup.id
       } else {
-        const groupId = await chrome.tabs.group({ tabIds })
-        groupUpdates.push({ groupId, title, color })
+        groupId = await chrome.tabs.group({ tabIds })
       }
 
-      colorAssignments[title.toLowerCase()] = color
-    }
-
-    // Phase 2: Apply titles and colors only
-    for (const { groupId, title, color } of groupUpdates) {
+      // Set title, color, and collapse immediately after grouping
       try {
-        await chrome.tabGroups.update(groupId, { title, color })
-      } catch { /* skip */ }
-      await new Promise(resolve => setTimeout(resolve, 100))
-    }
-
-    // Phase 3: Query fresh group IDs from Chrome, then collapse each one
-    // Collapsed groups with titles show as labeled colored chips in the tab strip
-    await new Promise(resolve => setTimeout(resolve, 300))
-    const freshGroups = await chrome.tabGroups.query({ windowId: chrome.windows.WINDOW_ID_CURRENT })
-    for (const group of freshGroups) {
-      try {
-        await chrome.tabGroups.update(group.id, { collapsed: true })
-      } catch { /* skip */ }
+        await chrome.tabGroups.update(groupId, { title, color, collapsed: true })
+        console.log(`[TabOrganizer] Updated group "${title}" (${groupId}): color=${color}, collapsed=true`)
+      } catch (err) {
+        console.error(`[TabOrganizer] Failed to update group "${title}" (${groupId}):`, err)
+      }
       await new Promise(resolve => setTimeout(resolve, 150))
+
+      colorAssignments[title.toLowerCase()] = color
     }
 
     await chrome.storage.local.set({ [STORAGE_KEYS.COLOR_ASSIGNMENTS]: colorAssignments })
