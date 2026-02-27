@@ -1,12 +1,76 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('https://github.githubassets.com/assets/mona-sans-regular-54e4db4a1a.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('https://github.githubassets.com/assets/mona-sans-medium-262e4cfa98.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('https://github.githubassets.com/assets/mona-sans-semibold-2e148b1e47.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('https://github.githubassets.com/assets/mona-sans-bold-3f6a244e1b.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Dark theme (default) */
+[data-theme="dark"] {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-tertiary: #0f3460;
+  --border: #0f3460;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --accent: #e94560;
+  --accent-hover: #c73e54;
+  --accent-muted: rgba(233, 69, 96, 0.1);
+  --hover-bg: rgba(26, 26, 46, 0.6);
+  --toggle-off: #4b5563;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f6f8fa;
+  --bg-tertiary: #e1e4e8;
+  --border: #d0d7de;
+  --text-primary: #1f2328;
+  --text-secondary: #656d76;
+  --text-tertiary: #8b949e;
+  --accent: #e94560;
+  --accent-hover: #d63a55;
+  --accent-muted: rgba(233, 69, 96, 0.08);
+  --hover-bg: rgba(0, 0, 0, 0.04);
+  --toggle-off: #c9d1d9;
+}
+
 body {
   width: 100%;
   min-height: 100vh;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #1a1a2e;
-  color: #e0e0e0;
+  font-family: 'Mona Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 #root {

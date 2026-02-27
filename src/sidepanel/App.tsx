@@ -8,7 +8,7 @@ function AppContent() {
   const { showSettings } = useTabContext()
 
   return (
-    <div className="flex flex-col h-screen bg-[#1a1a2e]">
+    <div className="flex flex-col h-screen bg-[var(--bg-primary)]">
       <Header />
       <div className="flex-1 overflow-y-auto">
         {showSettings ? <SettingsPanel /> : <TabOverview />}

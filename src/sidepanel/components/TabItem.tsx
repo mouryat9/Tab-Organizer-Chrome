@@ -25,9 +25,9 @@ export function TabItem({ tab, groupId }: Props) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`flex items-center gap-2 px-3 py-1.5 mx-1 rounded hover:bg-[#1a1a2e] group cursor-grab active:cursor-grabbing transition-colors ${
+      className={`flex items-center gap-2 px-3 py-1.5 mx-1 rounded hover:bg-[var(--hover-bg)] group cursor-grab active:cursor-grabbing transition-colors ${
         isDragging ? 'opacity-50 z-50' : ''
-      } ${tab.active ? 'bg-[#1a1a2e]/60' : ''}`}
+      } ${tab.active ? 'bg-[var(--hover-bg)]' : ''}`}
     >
       {/* Favicon */}
       <img
@@ -45,17 +45,17 @@ export function TabItem({ tab, groupId }: Props) {
         className="flex-1 min-w-0 cursor-pointer"
         onClick={() => activateTab(tab.id)}
       >
-        <p className="text-xs text-white truncate leading-tight">
+        <p className="text-xs text-[var(--text-primary)] truncate leading-tight">
           {tab.title || 'Untitled'}
         </p>
-        <p className="text-[10px] text-gray-500 truncate leading-tight">
+        <p className="text-[10px] text-[var(--text-tertiary)] truncate leading-tight">
           {tab.domain}
         </p>
       </div>
 
       {/* Active indicator */}
       {tab.active && (
-        <div className="w-1.5 h-1.5 rounded-full bg-[#e94560] shrink-0" />
+        <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
       )}
 
       {/* Close button */}
@@ -64,7 +64,7 @@ export function TabItem({ tab, groupId }: Props) {
           e.stopPropagation()
           closeTab(tab.id)
         }}
-        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-500/20 text-gray-500 hover:text-red-400 transition-all shrink-0"
+        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-500/20 text-[var(--text-tertiary)] hover:text-red-400 transition-all shrink-0"
         title="Close tab"
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

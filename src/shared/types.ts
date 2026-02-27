@@ -1,4 +1,5 @@
 export type OrganizingTemplate = 'domain' | 'session' | 'category' | 'recency' | 'activity'
+export type Theme = 'light' | 'dark'
 
 export interface TemplateInfo {
   id: OrganizingTemplate
@@ -31,6 +32,7 @@ export interface Settings {
   ignorePinnedTabs: boolean
   ignoreInternalPages: boolean
   activeTemplate: OrganizingTemplate
+  theme: Theme
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -39,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   ignorePinnedTabs: true,
   ignoreInternalPages: true,
   activeTemplate: 'domain',
+  theme: 'dark',
 }
 
 // Strategy function signature: takes tabs + extra data, returns groupTitle -> tabIds

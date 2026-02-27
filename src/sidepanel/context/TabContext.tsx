@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
-import type { GroupedTabState, Settings } from '../../shared/types'
+import type { GroupedTabState, Settings, Theme } from '../../shared/types'
 import { DEFAULT_SETTINGS } from '../../shared/types'
 import { sendToBackground } from '../../shared/messaging'
+
+function applyTheme(theme: Theme) {
+  document.documentElement.setAttribute('data-theme', theme)
+}
 
 interface TabContextValue {
   groups: GroupedTabState[]
@@ -18,6 +22,7 @@ interface TabContextValue {
   closeTab: (tabId: number) => Promise<void>
   activateTab: (tabId: number) => Promise<void>
   updateSettings: (settings: Partial<Settings>) => Promise<void>
+  toggleTheme: () => void
 }
 
 const TabContext = createContext<TabContextValue | null>(null)
@@ -28,6 +33,16 @@ export function TabProvider({ children }: { children: ReactNode }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [showSettings, setShowSettings] = useState(false)
   const portRef = useRef<chrome.runtime.Port | null>(null)
+
+  // Apply theme on settings change
+  useEffect(() => {
+    applyTheme(settings.theme)
+  }, [settings.theme])
+
+  // Apply default theme immediately
+  useEffect(() => {
+    applyTheme(DEFAULT_SETTINGS.theme)
+  }, [])
 
   useEffect(() => {
     // Establish long-lived port connection
@@ -92,6 +107,11 @@ export function TabProvider({ children }: { children: ReactNode }) {
     await sendToBackground({ type: 'UPDATE_SETTINGS', settings: partial })
   }, [])
 
+  const toggleTheme = useCallback(() => {
+    const newTheme: Theme = settings.theme === 'dark' ? 'light' : 'dark'
+    updateSettings({ theme: newTheme })
+  }, [settings.theme, updateSettings])
+
   return (
     <TabContext.Provider
       value={{
@@ -109,6 +129,7 @@ export function TabProvider({ children }: { children: ReactNode }) {
         closeTab,
         activateTab,
         updateSettings,
+        toggleTheme,
       }}
     >
       {children}

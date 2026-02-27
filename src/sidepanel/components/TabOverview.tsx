@@ -41,7 +41,7 @@ export function TabOverview() {
 
   if (filteredGroups.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+      <div className="flex flex-col items-center justify-center h-64 text-[var(--text-tertiary)]">
         {searchQuery ? (
           <>
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mb-3 opacity-50">
